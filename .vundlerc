@@ -1,0 +1,86 @@
+" Vundle
+    " Setting up Vundle - the vim plugin bundler
+        let isVundleInstalled=1
+        let vundle_readme=expand("~/.vim/bundle/vundle/README.md")
+        if !filereadable(vundle_readme)
+            echo "Installing Vundle.."
+            echo ""
+            silent !mkdir -p ~/.vim/bundle
+            silent !git clone https://github.com/gmarik/vundle ~/.vim/bundle/vundle
+            let isVundleInstalled=0
+        endif
+        set rtp+=~/.vim/bundle/vundle/
+        call vundle#rc()
+        Bundle 'gmarik/vundle'
+    " Setting up Vundle - the vim plugin bundler end
+
+    " Bundles
+        " General Vim
+            Bundle 'scrooloose/nerdtree'
+            Bundle 'scrooloose/nerdcommenter'
+            Bundle 'tpope/vim-fugitive.git'
+            Bundle 'Command-T'
+            Bundle 'scrooloose/syntastic'
+            Bundle 'peterhoeg/vim-tmux'
+            Bundle 'benmills/vimux'
+            Bundle 'Lokaltog/vim-powerline'
+            Bundle 'mattn/gist-vim'
+            Bundle 'tpope/vim-endwise'
+            Bundle 'tpope/vim-surround'
+            Bundle 'vim-scripts/matchit.zip'
+            Bundle 'vim-scripts/xptemplate.git'
+        " General Vim end
+
+        " Python
+            Bundle 'fs111/pydoc.vim'
+            Bundle 'nvie/vim-pep8'
+            Bundle 'nvie/vim-pyflakes'
+            Bundle 'klen/python-mode'
+        " Python end
+
+        " C
+            Bundle 'Rip-Rip/clang_complete'
+        " C end
+
+        " Web (generic)
+        " Web (generic) end
+
+        " Javascript / node / coffeescript
+            Bundle 'hallettj/jslint.vim'
+        " Javascript / node /coffeescript end
+
+        " C# / .Niet
+
+        " C# / .Niet end
+
+        " Java
+        "
+        " Java end
+
+        " Ruby
+        " Ruby end
+
+        " Markdown
+            Bundle 'tpope/vim-markdown'
+        " Markdown end
+
+        " Textile
+            Bundle 'timcharper/textile.vim'
+        " Textile end
+
+        " Misc
+            Bundle 'vim-scripts/nginx.vim'
+            Bundle 'ingydotnet/yaml-vim'
+            Bundle 'vim-scripts/cheat.vim'
+
+            Bundle 'bash-support.vim'
+            Bundle 'SuperTab'
+            Bundle 'snipMate'
+        " Misc end
+    " Bundles end
+    if isVundleInstalled == 0
+        echo "Installing Bundles, please ignore key map error messages"
+        echo ""
+    :BundleInstall
+    endif
+" Vundle end

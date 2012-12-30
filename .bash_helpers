@@ -1,0 +1,7 @@
+function dropbox()
+{
+    ~/.dropbox-dist/dropboxd &
+}
+
+# remove helper if dropbox not installed
+[[ -f ~/.dropbox-dist/dropboxd ]] || unset dropbox

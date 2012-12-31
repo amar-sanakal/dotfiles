@@ -9,3 +9,4 @@ This is a copy of my startup files
     <code>rake<code>  
     or  
     <code>rake install<code>
+3. You will need to update the <code>.gitconfig<code> file with your name and email

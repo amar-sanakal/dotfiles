@@ -5,7 +5,7 @@ task    :install do
     Dir.chdir()
     Dir.entries("dotfiles").sort.each do |file|
         if file =~ /^(\....*)$/
-            next if file =~ /^\.git*$/
+            next if file =~ /^\.git(|ignore)$/
             linkname = File.basename(file)
             if File.symlink?(linkname)
                 puts "link: #{linkname} already exists -> #{File.readlink(linkname)}"

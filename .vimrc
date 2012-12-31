@@ -30,6 +30,14 @@ if has('statusline')
     set statusline+=%*
 endif
 
+" Show trailing whitepaces
+highlight ExtraWhiteSpace ctermbg=red guibg=red
+au ColorScheme * highlight ExtraWhiteSpace ctermbg=red guibg=red
+match ExtraWhiteSpace /\s\+$/
+
+" Remove trailing whitepaces
+nnoremap <silent> <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>
+
 " This makes vim act like all other editors, buffers can
 " exist in the background without being in a window.
 " http://items.sjbach.com/319/configuring-vim-right
@@ -120,6 +128,3 @@ au BufRead,BufNewFile  *.coffee set filetype=coffee
 
 " highlighting for my vundlerc
 au BufRead,BufNewFile .vundlerc set filetype=vim
-
-" remove trailing spaces.
-au BufWritePre * :%s/\s\+$//e

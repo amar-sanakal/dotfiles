@@ -11,7 +11,7 @@ task    :install do
                 puts "link: #{linkname} already exists -> #{File.readlink(linkname)}"
             elsif File.file?(linkname)
                 puts "file: #{linkname} already exists"
-                puts "#{linkname}: backup or remove it and run this comand again, if you want it replaced"
+                puts "#{linkname}: backup or remove it and run this command again, if you want it replaced"
             else
                 puts "creating symbolic link for #{linkname}"
                 File.symlink(File.join("dotfiles", file), linkname)

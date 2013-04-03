@@ -7,8 +7,10 @@ import os.path
 import stat
 import tempfile
 import pprint
+import subprocess
 from string     import Template
-from subprocess import call, check_call, CalledProcessError
+
+sessions_data_file = os.path.expanduser("~/.tmux/sessions.tmux")
 
 def get_header_lines(session_name):
     header = Template("""#!/bin/bash
@@ -61,8 +63,8 @@ def get_script_content(session_name, servers):
 def ssh(server):
     logging.info("checking server: %s" % server)
     try:
-        ssh = check_call(["ssh", "-q", server, "echo"])
-    except CalledProcessError as e:
+        ssh = subprocess.check_call(["ssh", "-q", server, "echo"])
+    except subprocess.CalledProcessError as e:
         print "error: ssh to %s failed with reutrn code %d" % (server, e.returncode)
         return False
     return True
@@ -72,20 +74,46 @@ def check_servers(servers):
         if not ssh(server):
             sys.exit(1)
 
+def get_all_sessions():
+    return sorted(set(get_defined_sessions() + get_active_sessions()))
+
+def get_active_sessions():
+    proc = subprocess.Popen(["tmux", "list-sessions"], stdout=subprocess.PIPE)
+    sessions = []
+    for line in proc.stdout:
+        if re.search(":", line):
+            sessions.append(line[0:line.index(":")])
+    return sessions
+
+def get_defined_sessions():
+    if not os.path.isfile(sessions_data_file):
+        logging.critical("fatal: {} file not found".format(sessions_data_file))
+        sys.exit("cannot proceed without sessions definition file")
+
+    sessions = []
+    with open(sessions_data_file) as file:
+        for line in file:
+            if re.match("#",line) is None and re.search(":", line):
+                sessions.append(line[0:line.index(":")].strip())
+    return sessions
+
 def get_session_servers(session):
-    session_file=os.path.expanduser("~/.tmux/sessions.tmux")
-    if not os.path.isfile(session_file):
-        logging.critical("fatal: {} file not found".format(session_file))
+    if not os.path.isfile(sessions_data_file):
+        logging.critical("fatal: {} file not found".format(sessions_data_file))
         sys.exit("cannot proceed without sessions definition file")
 
     servers = None
-    with open(session_file) as file:
+    with open(sessions_data_file) as file:
         for line in file:
             if re.match(session, line):
                 servers = [srv.strip() for srv in line[line.rindex(":")+1:].split(",")]
     return servers
 
-def start_session(session):
+def attach_session(session):
+    cmd = ["tmux", "attach-session", "-t", session]
+    subprocess.call(cmd)
+
+def new_session(session):
     servers = get_session_servers(session)
     if servers is None:
         sys.exit("no servers defined for session [{}]".format(session))
@@ -96,11 +124,19 @@ def start_session(session):
 
     os.chmod(script, os.stat(script).st_mode | stat.S_IEXEC)
     logging.info("running {}".format(script))
-    call(["/bin/bash", script])
+    subprocess.call(["/bin/bash", script])
     os.remove(script)
+
+def start_session(session):
+    if session in get_active_sessions():
+        attach_session(session)
+    else:
+        new_session(session)
 
 if __name__ == "__main__":
     logging.basicConfig(format="%(message)s", level=logging.INFO)
     if len(sys.argv) < 2:
+        print get_active_sessions()
+        print get_all_sessions()
         sys.exit("usage: {} session_name".format(sys.argv[0]))
     start_session(sys.argv[1])

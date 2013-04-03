@@ -82,7 +82,7 @@ def get_session_servers(session):
     with open(session_file) as file:
         for line in file:
             if re.match(session, line):
-                servers = line[line.rindex(":")+1:].strip().split(",")
+                servers = [srv.strip() for srv in line[line.rindex(":")+1:].split(",")]
     return servers
 
 def start_session(session):

@@ -17,7 +17,7 @@ set autoread                    "Reload files changed outside vim
 
 " ================ Look & feel  ====================
 
-"set background=dark             "use a dark background
+set background=dark             "use a dark background
 if has('statusline')
     set laststatus=2
     " Broken down into easily includeable segments
@@ -29,6 +29,11 @@ if has('statusline')
     set statusline+=%{SyntasticStatuslineFlag()}
     set statusline+=%*
 endif
+
+" Hghlighting that moves with the cursor
+highlight CursorColumn cterm=NONE ctermbg=darkred ctermfg=white guibg=darkred guifg=white
+set cursorline
+set cursorcolumn
 
 " Show trailing whitepaces
 highlight ExtraWhiteSpace ctermbg=red guibg=red

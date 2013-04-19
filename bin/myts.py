@@ -111,7 +111,10 @@ def get_session_servers(session):
 
 def attach_session(session):
     cmd = ["tmux", "attach-session", "-t", session]
-    subprocess.call(cmd)
+    if session is None:
+        print "quitting..."
+    else:
+        subprocess.call(cmd)
 
 def new_session(session):
     servers = get_session_servers(session)
@@ -130,14 +133,12 @@ def new_session(session):
 def prompt_for_active_sessions():
     sessions = get_active_sessions()
     print "Choose one of the following sessions by number (or n)\n"
-    choice = {'n': 'null'}
+    choice = {'n': None}
     for item, value in enumerate(sessions):
         print "%2d: %s" % (item+1, value)
         choice[str(item+1)] = value
     while True:
         ans = raw_input("your choice: ")
-        print "ans = ", ans
-        print choice.keys()
         if (ans in choice.keys()):
             break
         else:

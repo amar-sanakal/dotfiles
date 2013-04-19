@@ -127,6 +127,23 @@ def new_session(session):
     subprocess.call(["/bin/bash", script])
     os.remove(script)
 
+def prompt_for_active_sessions():
+    sessions = get_active_sessions()
+    print "Choose one of the following sessions by number (or n)\n"
+    choice = {'n': 'null'}
+    for item, value in enumerate(sessions):
+        print "%2d: %s" % (item+1, value)
+        choice[str(item+1)] = value
+    while True:
+        ans = raw_input("your choice: ")
+        print "ans = ", ans
+        print choice.keys()
+        if (ans in choice.keys()):
+            break
+        else:
+            print "error: invalid choice"
+    return choice[ans]
+
 def start_session(session):
     if session in get_active_sessions():
         attach_session(session)
@@ -136,7 +153,6 @@ def start_session(session):
 if __name__ == "__main__":
     logging.basicConfig(format="%(message)s", level=logging.INFO)
     if len(sys.argv) < 2:
-        print get_active_sessions()
-        print get_all_sessions()
-        sys.exit("usage: {} session_name".format(sys.argv[0]))
-    start_session(sys.argv[1])
+        attach_session(prompt_for_active_sessions())
+    else:
+        start_session(sys.argv[1])

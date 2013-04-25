@@ -78,12 +78,8 @@ def get_all_sessions():
     return sorted(set(get_defined_sessions() + get_active_sessions()))
 
 def get_active_sessions():
-    proc = subprocess.Popen(["tmux", "list-sessions"], stdout=subprocess.PIPE)
-    sessions = []
-    for line in proc.stdout:
-        if re.search(":", line):
-            sessions.append(line[0:line.index(":")])
-    return sessions
+    output = subprocess.check_output(["tmux", "list-sessions"])
+    return [line[0:line.index(":")] for line in output.split("\n") if re.search(":", line)]
 
 def get_defined_sessions():
     if not os.path.isfile(sessions_data_file):

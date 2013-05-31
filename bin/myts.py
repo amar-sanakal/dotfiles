@@ -8,6 +8,7 @@ import stat
 import tempfile
 import pprint
 import subprocess
+import argparse
 from string     import Template
 
 sessions_data_file = os.path.expanduser("~/.tmux/sessions.tmux")
@@ -78,7 +79,10 @@ def get_all_sessions():
     return sorted(set(get_defined_sessions() + get_active_sessions()))
 
 def get_active_sessions():
-    output = subprocess.check_output(["tmux", "list-sessions"])
+    try:
+        output = subprocess.check_output(["tmux", "list-sessions"])
+    except subprocess.CalledProcessError as e:
+        return None
     return [line[0:line.index(":")] for line in output.split("\n") if re.search(":", line)]
 
 def get_defined_sessions():
@@ -115,7 +119,9 @@ def attach_session(session):
 def new_session(session):
     servers = get_session_servers(session)
     if servers is None:
-        sys.exit("no servers defined for session [{}]".format(session))
+        cmd = ["tmux", "new-session", "-s", session]
+        subprocess.call(cmd)
+        return
     check_servers(servers)
     script = tempfile.mkstemp()[1]
     with open(script, "w") as file:
@@ -128,8 +134,11 @@ def new_session(session):
 
 def prompt_for_active_sessions():
     sessions = get_active_sessions()
-    print "Choose one of the following sessions by number (or n)\n"
-    choice = {'n': None}
+    if sessions is None:
+        logging.info("no active sessions found")
+        return None
+    print "Choose one of the following sessions by number (or q, to quit)\n"
+    choice = {'q': None}
     for item, value in enumerate(sessions):
         print "%2d: %s" % (item+1, value)
         choice[str(item+1)] = value
@@ -147,9 +156,23 @@ def start_session(session):
     else:
         new_session(session)
 
+def process_args():
+    parser = argparse.ArgumentParser(
+            description="start a tmux session")
+    parser.add_argument(
+            'session', nargs='?', help='name of the session')
+    parser.add_argument(
+            '--prompt', '-p', action='store_true', default=False, help='prompt for the session to start')
+    args = parser.parse_args()
+    if args.prompt is None and args.session is None:
+        logging.info("no arguments passed")
+        parser.print_usage()
+    else:
+        if args.session is not None:
+            start_session(args.session)
+        else:
+            attach_session(prompt_for_active_sessions())
+
 if __name__ == "__main__":
     logging.basicConfig(format="%(message)s", level=logging.INFO)
-    if len(sys.argv) < 2:
-        attach_session(prompt_for_active_sessions())
-    else:
-        start_session(sys.argv[1])
+    process_args()

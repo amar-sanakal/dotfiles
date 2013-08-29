@@ -32,7 +32,8 @@ if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
 
-PROMPT_COMMAND='[ $? = 0 ] && PS1="\[\e[32;1m\]\u@\h\[\e[0m\]:\[\e[34;1m\]\w\[\e[0m\] [\!]\n\r$ " || PS1="\[\e[31;1m\]\u@\h\[\e[0m\]:\[\e[31;1m\]\w\[\e[0m\] [\!]\n\r$ "'
+# Neat trick to change prompt colour, I picked from Richard Spencer-Smith
+PROMPT_COMMAND='[ $? = 0 ] && PS1="\[\e[32;1m\]\u@\h\[\e[0m\]:\[\e[34;1m\]\w\[\e[0m\] [\!]\n$ " || PS1="\[\e[31;1m\]\u@\h\[\e[0m\]:\[\e[31;1m\]\w\[\e[0m\] [\!]\n$ "'
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in

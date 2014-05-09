@@ -107,6 +107,7 @@ def get_session_servers(session):
         for line in file:
             if re.match(session, line):
                 servers = [srv.strip() for srv in line[line.rindex(":")+1:].split(",")]
+                break
     return servers
 
 def attach_session(session):

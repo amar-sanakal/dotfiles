@@ -3,7 +3,8 @@ task    :default   =>  [:install]
 desc    "installs the dotfiles"
 task    :install do
     Dir.chdir()
-    Dir.entries("dotfiles").sort.each do |file|
+    this_directory = File.dirname(__FILE__)
+    Dir.entries(this_directory).sort.each do |file|
         if file =~ /^(\....*)$/
             next if file =~ /^\.git(|ignore)$/
             linkname = File.basename(file)
@@ -14,7 +15,7 @@ task    :install do
                 puts "#{linkname}: backup or remove it and run this command again, if you want it replaced"
             else
                 puts "creating symbolic link for #{linkname}"
-                File.symlink(File.join("dotfiles", file), linkname)
+                File.symlink(File.join(this_directory, file), linkname)
             end
         end
     end

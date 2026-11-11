@@ -1,0 +1,8 @@
+set editing-mode vi
+
+# Show mode in the prompt
+set show-mode-in-prompt on
+
+# Display strings
+set vi-cmd-mode-string "\1\e[31m\2[NORMAL]\1\e[0m\2 "
+set vi-ins-mode-string "\1\e[32m\2[INSERT]\1\e[0m\2 "
